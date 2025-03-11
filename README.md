@@ -127,3 +127,5 @@ The Whisper model, developed by OpenAI, is an advanced automatic speech recognit
 ![image](https://github.com/user-attachments/assets/85977851-8cd8-4ba9-a4cf-bfd69d006e83)
 
 當然我們還需要一些整理, 才能將這個簡單的設計實際使用. 
+
+If you are interested in my other sharing, please visit https://github.com/justinlaw360?tab=repositories
