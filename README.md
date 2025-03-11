@@ -12,9 +12,9 @@ The Whisper model, developed by OpenAI, is an advanced automatic speech recognit
 
 `pip install whisperx`
 
+`import whisperx`
 
-`import whisperx
-from pyannote.audio import Pipeline`
+`from pyannote.audio import Pipeline`
 
 # Load the WhisperX model
 `model = whisperx.load_model("large-v2", device="cpu", compute_type="float32")
