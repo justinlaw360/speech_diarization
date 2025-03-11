@@ -49,7 +49,7 @@ The Whisper model, developed by OpenAI, is an advanced automatic speech recognit
 
 `result = model.transcribe("./source/repos/whisper/output.wav", language="zh")`
 
-然後再根據會議記錄及公事公辦的語音分析合併起來, 就能得出我們想要的結果. 
+然後再將會議記錄及語音分析合併起來, 就能得出我們想要的結果. 
 
 `transcription = result['segments']`
 
