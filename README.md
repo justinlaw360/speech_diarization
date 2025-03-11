@@ -23,14 +23,17 @@ The Whisper model, developed by OpenAI, is an advanced automatic speech recognit
 
 `from pyannote.audio import Pipeline`
 
-`model = whisperx.load_model("large-v2", device="cpu", compute_type="float32")
-pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token="hf_apikey")`
+`model = whisperx.load_model("large-v2", device="cpu", compute_type="float32")`
+
+首先我們利用模型, 根據議會者的講話聲音, 進行分類. 
+
+`pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token="hf_apikey")`
 
 假如我們已經有一個會議的錄音. 他以WAV format儲存在電腦上, output.wav. 這個模型可以預先輸入最多或最少會議會者人數, 以增加準確率. Let's transcribe the audio "output.wav"
  
 `diarization = pipeline("./source/repos/whisper/output.wav", min_speakers=5, max_speakers=17)`
 
-我們來看看這個模型分析之後的結果. 
+我們來看看這個模型分析之後的結果. 我這段錄音總共有20多人參與會議, 有10多位同事都發言. 現根據語音分析, 這個會議有17個不同的人講話. 
 
 `diarization`
 ![image](https://github.com/user-attachments/assets/5f5f2e1a-feb8-4488-b320-10d035c2af2d)
