@@ -58,8 +58,9 @@ The Whisper model, developed by OpenAI, is an advanced automatic speech recognit
 `last_diarization_end = last_segment['end']`
 
 `def find_best_match(diarization, start_time, end_time):`
-    `best_match = None`
-    `max_intersection = 0`
+
+    best_match = None
+    max_intersection = 0
 
     for turn, _, speaker in diarization.itertracks(yield_label=True):
         turn_start = turn.start
