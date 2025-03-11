@@ -33,7 +33,7 @@ The Whisper model, developed by OpenAI, is an advanced automatic speech recognit
  
 `diarization = pipeline("./source/repos/whisper/output.wav", min_speakers=5, max_speakers=17)`
 
-我們來看看這個模型分析之後的結果. 我這段錄音總共有20多人參與會議, 有10多位同事都發言. 現根據語音分析, 這個會議有17個不同的人講話. 
+我們來看看這個模型分析之後的結果. 我這段錄音總共有20多人參與會議, 有10多位同事都發言. 模型根據語音分析, 這個會議有17個不同的人講話. 
 
 `diarization`
 ![image](https://github.com/user-attachments/assets/5f5f2e1a-feb8-4488-b320-10d035c2af2d)
@@ -45,6 +45,85 @@ The Whisper model, developed by OpenAI, is an advanced automatic speech recognit
 
 ![image](https://github.com/user-attachments/assets/65781414-11b9-49d4-a46c-ec9585e09ca6)
 
+接下來就是把會議語音變成文字記錄下來. 
 
+`result = model.transcribe("./source/repos/whisper/output.wav", language="zh")`
+
+然後再根據會議記錄及公事公辦的語音分析合併起來, 就能得出我們想要的結果. 
+
+`transcription = result['segments']`
+
+`last_segment = transcription[-1]`
+
+`last_diarization_end = last_segment['end']`
+
+`def find_best_match(diarization, start_time, end_time):`
+    `best_match = None`
+    `max_intersection = 0`
+
+    for turn, _, speaker in diarization.itertracks(yield_label=True):
+        turn_start = turn.start
+        turn_end = turn.end
+
+        # Calculate intersection manually
+        intersection_start = max(start_time, turn_start)
+        intersection_end = min(end_time, turn_end)
+
+        if intersection_start < intersection_end:
+            intersection_length = intersection_end - intersection_start
+            if intersection_length > max_intersection:
+                max_intersection = intersection_length
+                best_match = (turn_start, turn_end, speaker)
+
+    return best_match
+
+    def merge_consecutive_segments(segments):
+    merged_segments = []
+    previous_segment = None
+
+    for segment in segments:
+        if previous_segment is None:
+            previous_segment = segment
+        else:
+            if segment[0] == previous_segment[0]:
+                # Merge segments of the same speaker that are consecutive
+                previous_segment = (
+                    previous_segment[0],
+                    previous_segment[1],
+                    segment[2],
+                    previous_segment[3] + segment[3]
+                )
+            else:
+                merged_segments.append(previous_segment)
+                previous_segment = segment
+
+    if previous_segment:
+        merged_segments.append(previous_segment)
+
+    return merged_segments
+
+`speaker_transcriptions = []`
+
+`for chunk in transcription:`
+
+    chunk_start = chunk['start']    
+    chunk_end = chunk['end']    
+    segment_text = chunk['text'
+    best_match = find_best_match(diarization, chunk_start, chunk_end)    
+    if best_match:
+        speaker = best_match[2]  # Extract the speaker label
+        speaker_transcriptions.append((speaker, chunk_start, chunk_end, segment_text))
+        
+`speaker_transcriptions = merge_consecutive_segments(speaker_transcriptions)`
+
+最後, 將合併結果輸出為CSV格式. 
+
+`import numpy as np`
+
+`array_speaker_transcriptions = np.array(speaker_transcriptions)`
+
+`np.savetxt('array_speaker_transcriptions.csv', array_speaker_transcriptions, delimiter=',',fmt='%s', encoding='utf-8')`
+
+![image](https://github.com/user-attachments/assets/85977851-8cd8-4ba9-a4cf-bfd69d006e83)
 
 
