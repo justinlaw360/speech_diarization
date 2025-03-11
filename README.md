@@ -19,11 +19,12 @@ The Whisper model, developed by OpenAI, is an advanced automatic speech recognit
 
 安裝完畢後, 我們就可以開始了調用這些語言模型. Load the Whisper Model and Speaker Diarization toolkit
 
-`import whisperx`
+```
+import whisperx
+from pyannote.audio import Pipeline
 
-`from pyannote.audio import Pipeline`
-
-`model = whisperx.load_model("large-v2", device="cpu", compute_type="float32")`
+model = whisperx.load_model("large-v2", device="cpu", compute_type="float32")
+```
 
 首先我們利用模型, 根據議會者的講話聲音, 進行分類. 
 
@@ -51,14 +52,12 @@ The Whisper model, developed by OpenAI, is an advanced automatic speech recognit
 
 然後再將會議記錄及語音分析合併起來, 就能得出我們想要的結果. 
 
-`transcription = result['segments']`
+```
+transcription = result['segments']
+last_segment = transcription[-1]
+last_diarization_end = last_segment['end']
 
-`last_segment = transcription[-1]`
-
-`last_diarization_end = last_segment['end']`
-
-`def find_best_match(diarization, start_time, end_time):`
-
+def find_best_match(diarization, start_time, end_time):
     best_match = None
     max_intersection = 0
 
@@ -103,27 +102,27 @@ The Whisper model, developed by OpenAI, is an advanced automatic speech recognit
 
     return merged_segments
 
-`speaker_transcriptions = []`
+speaker_transcriptions = []
 
-`for chunk in transcription:`
-
+for chunk in transcription:
     chunk_start = chunk['start']    
     chunk_end = chunk['end']    
-    segment_text = chunk['text'
+    segment_text = chunk['text']
     best_match = find_best_match(diarization, chunk_start, chunk_end)    
     if best_match:
         speaker = best_match[2]  # Extract the speaker label
         speaker_transcriptions.append((speaker, chunk_start, chunk_end, segment_text))
         
-`speaker_transcriptions = merge_consecutive_segments(speaker_transcriptions)`
+speaker_transcriptions = merge_consecutive_segments(speaker_transcriptions)
+```
 
 最後, 將合併結果輸出為CSV格式. 
 
-`import numpy as np`
-
-`array_speaker_transcriptions = np.array(speaker_transcriptions)`
-
-`np.savetxt('array_speaker_transcriptions.csv', array_speaker_transcriptions, delimiter=',',fmt='%s', encoding='utf-8')`
+```
+import numpy as np
+array_speaker_transcriptions = np.array(speaker_transcriptions)
+np.savetxt('array_speaker_transcriptions.csv', array_speaker_transcriptions, delimiter=',',fmt='%s', encoding='utf-8')
+```
 
 ![image](https://github.com/user-attachments/assets/85977851-8cd8-4ba9-a4cf-bfd69d006e83)
 
