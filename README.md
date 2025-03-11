@@ -77,7 +77,7 @@ def find_best_match(diarization, start_time, end_time):
 
     return best_match
 
-    def merge_consecutive_segments(segments):
+def merge_consecutive_segments(segments):
     merged_segments = []
     previous_segment = None
 
